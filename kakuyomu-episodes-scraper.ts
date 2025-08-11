@@ -5,10 +5,13 @@ import { chromium } from 'playwright';
  * @param url 目次ページURL
  * @returns エピソード情報配列 [{title, url}]
  */
-export async function scrapeAllEpisodes(url: string): Promise<{ title: string; url: string }[]> {
+export async function scrapeAllEpisodes(url: string): Promise<{ allEpisodes: { title: string; url: string }[], title: string }> {
   const browser = await chromium.launch();
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: 'domcontentloaded' });
+
+  //* タイトル取得
+  const title = await page.evaluate(() => document.title);
 
   // まず __NEXT_DATA__ のJSONから全話を抽出
   let allEpisodes: { title: string; url: string }[] = [];
@@ -55,7 +58,7 @@ export async function scrapeAllEpisodes(url: string): Promise<{ title: string; u
   // JSONから取得できた場合はそれを返す
   if (allEpisodes.length > 0) {
     await browser.close();
-    return allEpisodes;
+    return { allEpisodes, title };
   }
 
   // フォールバック: 目次タブ（1〜30, 31〜60, ...）のリンクをすべて取得
@@ -98,8 +101,9 @@ export async function scrapeAllEpisodes(url: string): Promise<{ title: string; u
       allEpisodes.push(ep);
     }
   }
+
   await browser.close();
-  return allEpisodes;
+  return {allEpisodes,title};
 }
 
 // CLIテスト用
@@ -113,7 +117,7 @@ if (require.main === module) {
   }
   scrapeAllEpisodes(url).then((eps) => {
     if (urlsOnly) {
-      eps.filter(ep => ep.url).forEach(ep => console.log(ep.url));
+      eps.allEpisodes.filter(ep => ep.url).forEach(ep => console.log(ep.url));
     } else {
       console.log(JSON.stringify(eps, null, 2));
     }

@@ -29,9 +29,9 @@ async function main() {
     // URL指定モード（全話取得: Playwright使用）
     try {
       const { scrapeAllEpisodes } = await import("./kakuyomu-episodes-scraper.ts");
-      const episodesRaw: { title: string; url: string }[] = await scrapeAllEpisodes(url);
+      const episodesRaw: { allEpisodes: { title: string; url: string }[], title: string } = await scrapeAllEpisodes(url);
       // downloadEpisodesWithProgressの型に合わせてupdate: "" を付与し、URLバリデーションも強化
-      const episodes = episodesRaw
+      const episodes = episodesRaw.allEpisodes
         .filter(ep => typeof ep.url === 'string' && ep.url.startsWith('http'))
         .map(ep => ({ ...ep, update: "" }));
       if (episodes.length === 0) {
@@ -48,7 +48,7 @@ async function main() {
         allText += aozora + "\n";
         return aozora;
       });
-      if (!options.dryRun) await saveTextFile("output.txt", allText);
+      if (!options.dryRun) await saveTextFile(`${episodesRaw.title}.txt`, allText);
       return;
     } catch (e) {
       console.error("Playwrightによる全話取得に失敗:", e);
