@@ -104,12 +104,18 @@ export async function scrapeAllEpisodes(url: string): Promise<{ title: string; u
 
 // CLIテスト用
 if (require.main === module) {
-  const url = process.argv[2];
+  const args = process.argv.slice(2);
+  const url = args[0];
+  const urlsOnly = args.includes('--urls');
   if (!url) {
-    console.error('Usage: bun kakuyomu-episodes-scraper.ts <目次URL>');
+    console.error('Usage: bun kakuyomu-episodes-scraper.ts <目次URL> [--urls]');
     process.exit(1);
   }
   scrapeAllEpisodes(url).then((eps) => {
-    console.log(JSON.stringify(eps, null, 2));
+    if (urlsOnly) {
+      eps.filter(ep => ep.url).forEach(ep => console.log(ep.url));
+    } else {
+      console.log(JSON.stringify(eps, null, 2));
+    }
   });
 }
