@@ -25,7 +25,7 @@
 git clone https://github.com/linkalls/kakuyomu-dl.git
 cd kakuyomu-dl
 bun install
-bunx playwright install install-deps
+bunx playwright install-deps
 bunx playwright install
 ```
 
