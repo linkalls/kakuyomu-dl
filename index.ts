@@ -128,7 +128,7 @@ function parseEpisodeBody(html: string): string {
 function aozoraFormatter(text: string, title: string): string {
   const kaipage = "［＃改ページ］\n";
   const midasi = `\n［＃中見出し］${title}［＃中見出し終わり］\n\n\n`;
-  return kaipage + midasi + text + "\n\n" + separator;
+  return kaipage + midasi + text + "\n\n";
 }
 
 const program = new Command();
