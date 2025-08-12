@@ -126,10 +126,9 @@ function parseEpisodeBody(html: string): string {
  * 青空文庫形式の中見出し・改ページ等で整形
  */
 function aozoraFormatter(text: string, title: string): string {
-  const separator = "▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼\n";
   const kaipage = "［＃改ページ］\n";
   const midasi = `\n［＃中見出し］${title}［＃中見出し終わり］\n\n\n`;
-  return kaipage + separator + midasi + text + "\n\n" + separator;
+  return kaipage + midasi + text + "\n\n" + separator;
 }
 
 const program = new Command();
